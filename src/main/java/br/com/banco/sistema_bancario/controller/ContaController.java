@@ -1,5 +1,7 @@
 package br.com.banco.sistema_bancario.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.banco.sistema_bancario.dto.ContaDTO;
 import br.com.banco.sistema_bancario.dto.OperacaoDTO;
+import br.com.banco.sistema_bancario.dto.TransacaoExtratoDTO;
 import br.com.banco.sistema_bancario.dto.TransferenciaDTO;
 import br.com.banco.sistema_bancario.model.Conta;
 import br.com.banco.sistema_bancario.service.ContaService;
@@ -57,5 +60,12 @@ public class ContaController {
     public ResponseEntity<Conta> transferir(@RequestBody TransferenciaDTO dto) {
         Conta conta = service.tranferir(dto.getContaOrigemId(), dto.getValor(), dto.getContaDestinoId());
         return ResponseEntity.ok(conta);
+    }
+
+    // GET /contas/{id}/extrato — extrato @GetMapping
+    @GetMapping("/{id}/extrato")
+    public ResponseEntity<List<TransacaoExtratoDTO>> extrato(@PathVariable Long id) {
+        List<TransacaoExtratoDTO> extrato = service.extrato(id);
+        return ResponseEntity.ok(extrato);
     }
 }
