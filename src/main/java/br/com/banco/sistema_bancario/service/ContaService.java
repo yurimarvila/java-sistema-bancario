@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.banco.sistema_bancario.dto.ContaDTO;
 import br.com.banco.sistema_bancario.dto.TransacaoExtratoDTO;
+import br.com.banco.sistema_bancario.exception.RecursoNaoEncontradoException;
 import br.com.banco.sistema_bancario.model.Cliente;
 import br.com.banco.sistema_bancario.model.Conta;
 import br.com.banco.sistema_bancario.model.TipoTransacao;
@@ -29,7 +30,7 @@ public class ContaService {
     public Conta criar(ContaDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.getClienteId()).orElse(null);
         if (cliente == null) {
-            throw new RuntimeException("Cliente não encontrado"); // Lançando uma exceção
+            throw new RecursoNaoEncontradoException("Cliente não encontrado"); // Lançando uma exceção
         }
 
         Conta conta = new Conta();
@@ -41,11 +42,11 @@ public class ContaService {
     }
 
     public Conta buscarPorId(Long id) {
-        return contaRepository.findById(id).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        return contaRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
     }
 
     public Conta depositar(Long contaId, Double valor) {
-        Conta conta = contaRepository.findById(contaId).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        Conta conta = contaRepository.findById(contaId).orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
         double saldoAtual = conta.getSaldo();
         double novoSaldo = saldoAtual + valor;
         conta.setSaldo(novoSaldo);
@@ -55,7 +56,7 @@ public class ContaService {
     }
 
     public Conta sacar(Long contaId, Double valor) {
-        Conta conta = contaRepository.findById(contaId).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        Conta conta = contaRepository.findById(contaId).orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
         double saldoAtual = conta.getSaldo();
         if (saldoAtual < valor) {
             throw new RuntimeException("Saldo insuficiente");
@@ -69,9 +70,9 @@ public class ContaService {
 
     public Conta tranferir(Long contaId, Double valor, Long contaDestinoId) {
         Conta contaOrigem = contaRepository.findById(contaId)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
         Conta contaDestino = contaRepository.findById(contaDestinoId)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
 
         double saldoOrigem = contaOrigem.getSaldo();
         double novoSaldoOrigem = saldoOrigem - valor;
@@ -100,7 +101,7 @@ public class ContaService {
 
     public List<TransacaoExtratoDTO> extrato(Long contaId) {
         Conta conta = contaRepository.findById(contaId)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Conta não encontrada"));
 
         List<Transacao> transacoes = transacaoRepository.findByConta(conta);
 

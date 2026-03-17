@@ -11,4 +11,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.status(400).body(e.getMessage());
     }
+
+    @ExceptionHandler(RecursoNaoEncontradoException.class)
+    public ResponseEntity<String> handleNaoEncontrado(RecursoNaoEncontradoException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
+    }
 }
